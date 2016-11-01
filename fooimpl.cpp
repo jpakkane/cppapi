@@ -45,7 +45,7 @@ int FooInternal::throw_exception() {
 
 // C API portion here.
 
-void convert_exception(char **error) {
+void convert_exception(char **error) noexcept {
     char *msg;
     try {
         throw;

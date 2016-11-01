@@ -59,7 +59,7 @@ public:
         if(error) {
             std::string emesg(error);
             free(error);
-            throw std::runtime_error(emesg); // Could be FooException.
+            throw std::runtime_error(emesg);
         }
         return result;
     }
@@ -71,7 +71,7 @@ public:
         if(error) {
             std::string emesg(error);
             free(error);
-            throw std::runtime_error(emesg); // Could be FooException.
+            throw std::runtime_error(emesg);
         }
         return result;
     }
