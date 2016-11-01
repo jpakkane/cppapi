@@ -26,11 +26,12 @@
 #include<stdexcept>
 #include<cstring>
 #include<cstdlib>
+#include<cassert>
 
 FooInternal::FooInternal() {
 }
 
-FooInternal::FooInternal(int x)  {
+FooInternal::FooInternal(int)  {
     throw std::runtime_error("Wrong construction.");
 }
 
@@ -47,10 +48,11 @@ int FooInternal::throw_exception() {
 
 void convert_exception(char **error) noexcept {
     char *msg;
+    assert(!*error);
     try {
         throw;
     } catch(const std::exception &e) {
-        msg = strdup(reinterpret_cast<char*>(malloc(strlen(e.what() + 1))));
+      msg = strdup(e.what());
     } catch(...) {
         msg = strdup("An unknown error happened.");
     }

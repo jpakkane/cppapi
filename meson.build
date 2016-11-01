@@ -1,5 +1,6 @@
 project('c/c++ api example', 'c', 'cpp',
-  default_options : ['cpp_std=c++14'])
+  default_options : ['cpp_std=c++14',
+                  'warning_level=3'])
 
 # This library exports a plain C API.
 flib = shared_library('foo', 'fooimpl.cpp',

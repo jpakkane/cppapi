@@ -36,16 +36,16 @@ extern "C" {
 
 struct Foo;
 
-struct Foo* FOO_PUBLIC foo_new();
-struct Foo* FOO_PUBLIC foo_new_with_number(int i);
+FOO_PUBLIC struct Foo* foo_new();
+FOO_PUBLIC struct Foo* foo_new_with_number(int i);
 void FOO_PUBLIC foo_destroy(struct Foo* f);
 
 /* error must point to nullptr and will be changed to
  * point to a string on error. Caller must free it with
  * free().
  */
-int FOO_PUBLIC foo_get_zero(struct Foo* f, char **error);
-int FOO_PUBLIC foo_throw_exception(struct Foo* f, char **error);
+FOO_PUBLIC int foo_get_zero(struct Foo* f, char **error);
+FOO_PUBLIC int foo_throw_exception(struct Foo* f, char **error);
 
 #ifdef __cplusplus
 }

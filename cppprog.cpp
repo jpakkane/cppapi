@@ -48,6 +48,9 @@ int main(int, char **) {
         exception_thrown = true;
     }
     if(!exception_thrown) {
-
+        printf("Exception not thrown even though it should have.\n");
+        return 1;
     }
+    printf("Everything seems to work.\n");
+    return 0;
 }

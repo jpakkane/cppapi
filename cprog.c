@@ -44,6 +44,11 @@ int main(int argc, char **argv) {
         return 1;
     }
     value = foo_get_zero(f, &error);
+    if(value != 0) {
+      printf("Got incorrect return value.\n");
+      foo_destroy(f);
+      return 1;
+    }
     if(error) {
         printf("Unexpected error: %s\n", error);
         free(error);
@@ -58,5 +63,6 @@ int main(int argc, char **argv) {
     }
     free(error);
     foo_destroy(f);
+    printf("Everything seems to work.\n");
     return 0;
 }
