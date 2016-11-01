@@ -21,32 +21,39 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#pragma once
+#include"foo.h"
+#include<stdio.h>
+#include<stdlib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#if defined __GNUC__
-  #define FOO_PUBLIC __attribute__ ((visibility("default")))
-#else
-  #pragma message ("Compiler does not support symbol visibility.")
-  #define FOO_PUBLIC
-#endif
-
-struct Foo;
-
-struct Foo* FOO_PUBLIC foo_new();
-struct Foo* FOO_PUBLIC foo_new_with_number(int i);
-void FOO_PUBLIC foo_destroy(struct Foo* f);
-
-/* error must point to nullptr and will be changed to
- * point to a string on error. Caller must free it with
- * free().
- */
-int FOO_PUBLIC foo_get_zero(struct Foo* f, char **error);
-int FOO_PUBLIC foo_throw_exception(struct Foo* f, char **error);
-
-#ifdef __cplusplus
+int main(int argc, char **argv) {
+    struct Foo *f;
+    struct Foo *fno;
+    char *error = NULL;
+    int value;
+    f = foo_new();
+    if(!f) {
+        printf("Could not create Foo object.\n");
+        return 1;
+    }
+    fno = foo_new_with_number(42);
+    if(fno) {
+        printf("Created Foo even though it should not have.\n");
+        return 1;
+    }
+    value = foo_get_zero(f, &error);
+    if(error) {
+        printf("Unexpected error: %s\n", error);
+        free(error);
+        foo_destroy(f);
+        return 1;
+    }
+    value = foo_throw_exception(f, &error);
+    if(!error) {
+        printf("Error not raised even though it should have been.\n");
+        foo_destroy(f);
+        return 1;
+    }
+    free(error);
+    foo_destroy(f);
+    return 0;
 }
-#endif

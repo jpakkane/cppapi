@@ -46,18 +46,20 @@ int FooInternal::throw_exception() {
 // C API portion here.
 
 void convert_exception(char **error) {
+    char *msg;
     try {
         throw;
     } catch(const std::exception &e) {
-        char *msg = reinterpret_cast<char*>(malloc(strlen(e.what() + 1)));
-        strcpy(msg, e.what());
-        error = &msg;
+        msg = strdup(reinterpret_cast<char*>(malloc(strlen(e.what() + 1))));
+    } catch(...) {
+        msg = strdup("An unknown error happened.");
     }
+    *error = msg;
 }
 
 extern "C" {
 
-struct Foo* create_foo() {
+struct Foo* foo_new() {
     try {
         return reinterpret_cast<Foo*>(new FooInternal());
     } catch(...) {
@@ -65,7 +67,7 @@ struct Foo* create_foo() {
     }
 }
 
-struct Foo* create_foo_number(int i) {
+struct Foo* foo_new_with_number(int i) {
     try {
         return reinterpret_cast<Foo*>(new FooInternal(i));
     } catch(...) {
