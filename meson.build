@@ -11,3 +11,8 @@ cprog = executable('cprog', 'cprog.c',
   link_with : flib)
 
 test('cprog', cprog)
+
+cppprog = executable('cppprog', 'cppprog.cpp',
+  link_with : flib)
+
+test('cppprog', cppprog)

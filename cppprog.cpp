@@ -21,42 +21,33 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include"foo.h"
-#include<stdio.h>
-#include<stdlib.h>
+#include"foo.hh"
+#include<cstdio>
 
-int main(int argc, char **argv) {
-    struct Foo *f;
-    struct Foo *fno;
-    char *error = NULL;
-    int value;
+int main(int, char **) {
+    FooPublic foo;
+    bool exception_thrown = false;
+    printf("Testing that the C++ rewrapper works.\n");
+    try {
+        FooPublic foo(99);
+    } catch(const std::exception &e) {
+        exception_thrown = true;
+    }
+    if(!exception_thrown) {
+        printf("Exception was not thrown on incorrect creation.\n");
+        return 1;
+    }
+    if(foo.get_zero() != 0) {
+        printf("Got incorrect return value.");
+        return 1;
+    }
+    exception_thrown = false;
+    try {
+        foo.throw_exception();
+    } catch(const std::exception &e) {
+        exception_thrown = true;
+    }
+    if(!exception_thrown) {
 
-    printf("Testing that the plain C API works as expected.\n");
-
-    f = foo_new();
-    if(!f) {
-        printf("Could not create Foo object.\n");
-        return 1;
     }
-    fno = foo_new_with_number(42);
-    if(fno) {
-        printf("Created Foo even though it should not have.\n");
-        return 1;
-    }
-    value = foo_get_zero(f, &error);
-    if(error) {
-        printf("Unexpected error: %s\n", error);
-        free(error);
-        foo_destroy(f);
-        return 1;
-    }
-    value = foo_throw_exception(f, &error);
-    if(!error) {
-        printf("Error not raised even though it should have been.\n");
-        foo_destroy(f);
-        return 1;
-    }
-    free(error);
-    foo_destroy(f);
-    return 0;
 }
