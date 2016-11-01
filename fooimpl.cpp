@@ -22,10 +22,12 @@
  */
 
 #include"foo-internal.h"
+#include"foo.h" // for simplicity
 #include<stdexcept>
+#include<cstring>
+#include<cstdlib>
 
 FooInternal::FooInternal() {
-
 }
 
 FooInternal::FooInternal(int x)  {
@@ -41,3 +43,56 @@ int FooInternal::throw_exception() {
     throw std::logic_error("Wrong call.");
 }
 
+// C API portion here.
+
+void convert_exception(char **error) {
+    try {
+        throw;
+    } catch(const std::exception &e) {
+        char *msg = reinterpret_cast<char*>(malloc(strlen(e.what() + 1)));
+        strcpy(msg, e.what());
+        error = &msg;
+    }
+}
+
+extern "C" {
+
+struct Foo* create_foo() {
+    try {
+        return reinterpret_cast<Foo*>(new FooInternal());
+    } catch(...) {
+        return nullptr; // Function does not take an error argument so just return null.
+    }
+}
+
+struct Foo* create_foo_number(int i) {
+    try {
+        return reinterpret_cast<Foo*>(new FooInternal(i));
+    } catch(...) {
+        return nullptr;
+    }
+}
+
+void foo_destroy(struct Foo* f) {
+    delete reinterpret_cast<FooInternal*>(f);
+}
+
+int foo_get_zero(struct Foo* f, char **error) {
+    try {
+        return reinterpret_cast<FooInternal*>(f)->get_zero();
+    } catch(...) {
+        convert_exception(error);
+        return -1;
+    }
+}
+
+int foo_throw_exception(struct Foo* f, char **error) {
+    try {
+        return reinterpret_cast<FooInternal*>(f)->throw_exception();
+    } catch(...) {
+        convert_exception(error);
+        return -1;
+    }
+}
+
+}
