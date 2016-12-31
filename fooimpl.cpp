@@ -61,9 +61,13 @@ void convert_exception(char **error) noexcept {
 
 extern "C" {
 
+struct Foo : public FooInternal {
+    using FooInternal::FooInternal;
+};
+
 struct Foo* foo_new() {
     try {
-        return reinterpret_cast<Foo*>(new FooInternal());
+        return new Foo;
     } catch(...) {
         return nullptr; // Function does not take an error argument so just return null.
     }
@@ -71,19 +75,19 @@ struct Foo* foo_new() {
 
 struct Foo* foo_new_with_number(int i) {
     try {
-        return reinterpret_cast<Foo*>(new FooInternal(i));
+        return new Foo(i);
     } catch(...) {
         return nullptr;
     }
 }
 
 void foo_destroy(struct Foo* f) {
-    delete reinterpret_cast<FooInternal*>(f);
+    delete f;
 }
 
 int foo_get_zero(struct Foo* f, char **error) {
     try {
-        return reinterpret_cast<FooInternal*>(f)->get_zero();
+        return f->get_zero();
     } catch(...) {
         convert_exception(error);
         return -1;
@@ -92,7 +96,7 @@ int foo_get_zero(struct Foo* f, char **error) {
 
 int foo_throw_exception(struct Foo* f, char **error) {
     try {
-        return reinterpret_cast<FooInternal*>(f)->throw_exception();
+        return f->throw_exception();
     } catch(...) {
         convert_exception(error);
         return -1;
